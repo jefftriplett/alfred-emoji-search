@@ -9,6 +9,9 @@ WORKFLOW_NAME := "Emoji Lookup"
 @bootstrap:
     just update
 
+@bump:
+    uv run bumpver update
+
 @bundle:
     #!/usr/bin/env bash
     set -euo pipefail

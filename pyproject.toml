@@ -1,11 +1,12 @@
 [project]
 name = "alfred-emoji"
-version = "0.1.0"
+version = "2025.12.1"
 description = "Alfred workflow for emoji lookup by shortcode and description"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "alfred-workflow",
+    "bumpver",
     "emoji",
     "pydantic",
     "ruff",
@@ -14,3 +15,15 @@ dependencies = [
 
 [tool.uv]
 package = false
+
+[tool.bumpver]
+current_version = "2025.12.1"
+version_pattern = "YYYY.0M.PATCH"
+commit_message = "Bump version {old_version} -> {new_version}"
+commit = true
+tag = true
+push = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = ['version = "{version}"', 'current_version = "{version}"']
+"info.plist" = ["<string>{version}</string>"]
