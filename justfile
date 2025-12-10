@@ -10,7 +10,7 @@ WORKFLOW_NAME := "Emoji Lookup"
     just update
 
 @bump:
-    uv run bumpver update
+    uv run bumpver update --patch
 
 @bundle:
     #!/usr/bin/env bash

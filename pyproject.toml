@@ -25,5 +25,10 @@ tag = true
 push = false
 
 [tool.bumpver.file_patterns]
-"pyproject.toml" = ['version = "{version}"', 'current_version = "{version}"']
-"info.plist" = ["<string>{version}</string>"]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+    'version = "{version}"',
+]
+"info.plist" = [
+    "<string>{version}</string>",
+]
