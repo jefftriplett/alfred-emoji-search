@@ -1,0 +1,16 @@
+[project]
+name = "alfred-emoji"
+version = "0.1.0"
+description = "Alfred workflow for emoji lookup by shortcode and description"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alfred-workflow",
+    "emoji",
+    "pydantic",
+    "ruff",
+    "typer",
+]
+
+[tool.uv]
+package = false
