@@ -1,0 +1,76 @@
+# Emoji Lookup Alfred Workflow
+
+Search and copy emoji by shortcode or description.
+
+## Installation
+
+1. Download `Emoji Lookup.alfredworkflow` from the [releases](https://github.com/jefftriplett/alfred-emoji/releases) or build it yourself with `just bundle`
+2. Double-click to install in Alfred
+
+## Usage
+
+Type `emoji` followed by a search term:
+
+```
+emoji heart
+emoji fire
+emoji party
+emoji thumbs
+```
+
+### Modifier Keys
+
+- **Enter** → Copy the emoji (e.g., 🎉)
+- **Option (⌥) + Enter** → Copy the shortcode with colons (e.g., `:party_popper:`)
+- **Cmd (⌘) + Enter** → Copy the shortcode without colons (e.g., `party_popper`)
+
+## Development
+
+### Requirements
+
+- [uv](https://docs.astral.sh/uv/) for Python package management
+- [just](https://github.com/casey/just) for running commands
+
+### Commands
+
+```bash
+# Run the script directly
+just run "heart"
+
+# Run with pretty-printed JSON output
+uv run main.py "heart" --indent 2
+
+# Build the Alfred workflow
+just bundle
+
+# Clean build artifacts
+just clean
+
+# Lint and format code
+just lint
+```
+
+### Project Structure
+
+```
+├── main.py          # Main script with PEP 723 inline dependencies
+├── info.plist       # Alfred workflow configuration
+├── justfile         # Build and development commands
+├── pyproject.toml   # Project metadata
+└── dist/            # Built workflow (after running `just bundle`)
+    ├── Emoji Lookup.alfredworkflow
+    ├── main.py
+    ├── info.plist
+    └── uv           # Bundled uv binary
+```
+
+## How It Works
+
+- Uses the [emoji](https://pypi.org/project/emoji/) library for emoji data
+- Searches both shortcodes (e.g., `:fire:`) and Unicode descriptions
+- Results are sorted by relevance (exact match → starts with → contains)
+- The workflow bundles a standalone `uv` binary so it works without any system dependencies
+
+## License
+
+MIT
