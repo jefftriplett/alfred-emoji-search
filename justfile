@@ -1,6 +1,6 @@
 set dotenv-load := false
 
-UV_VERSION := "0.9.17"
+UV_VERSION := "0.5.14"
 WORKFLOW_NAME := "Emoji Lookup"
 
 @_default:
@@ -29,6 +29,9 @@ WORKFLOW_NAME := "Emoji Lookup"
 
     # Copy workflow files to dist
     cp info.plist main.py dist/
+
+    # Make main.py executable
+    chmod +x dist/main.py
 
     # Build the .alfredworkflow package
     echo "Building {{ WORKFLOW_NAME }}.alfredworkflow..."
