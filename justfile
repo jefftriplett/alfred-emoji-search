@@ -28,7 +28,7 @@ bundle:
     fi
 
     # Copy workflow files to dist
-    cp info.plist main.py dist/
+    cp info.plist main.py icon.png dist/
 
     # Make main.py executable
     chmod +x dist/main.py
@@ -36,7 +36,7 @@ bundle:
     # Build the .alfredworkflow package
     echo "Building {{ WORKFLOW_NAME }}.alfredworkflow..."
     cd dist && rm -f "{{ WORKFLOW_NAME }}.alfredworkflow"
-    zip "{{ WORKFLOW_NAME }}.alfredworkflow" info.plist main.py uv
+    zip "{{ WORKFLOW_NAME }}.alfredworkflow" info.plist main.py icon.png uv
 
     echo "Done! Created dist/{{ WORKFLOW_NAME }}.alfredworkflow"
 
