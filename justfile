@@ -12,7 +12,7 @@ WORKFLOW_NAME := "Emoji Lookup"
 @bump:
     uv run bumpver update --patch
 
-@bundle:
+bundle:
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -42,6 +42,9 @@ WORKFLOW_NAME := "Emoji Lookup"
 
 @clean:
     rm -rf dist
+
+@open:
+    open "dist/{{ WORKFLOW_NAME }}.alfredworkflow"
 
 @fmt:
     just --fmt --unstable
