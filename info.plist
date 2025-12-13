@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>com.jefftriplett.alfred-emoji</string>
+	<string>com.jefftriplett.alfred-emoji-search</string>
 	<key>connections</key>
 	<dict>
 		<key>script-filter</key>

@@ -4,7 +4,7 @@ Search and copy emoji by shortcode or description.
 
 ## Installation
 
-1. Download `Emoji Lookup.alfredworkflow` from the [releases](https://github.com/jefftriplett/alfred-emoji/releases) or build it yourself with `just bundle`
+1. Download `Emoji Lookup.alfredworkflow` from the [releases](https://github.com/jefftriplett/alfred-emoji-search/releases) or build it yourself with `just bundle`
 2. Double-click to install in Alfred
 
 ## Usage

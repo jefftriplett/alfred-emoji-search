@@ -1,5 +1,5 @@
 [project]
-name = "alfred-emoji"
+name = "alfred-emoji-search"
 version = "2025.12.2"
 description = "Alfred workflow for emoji lookup by shortcode and description"
 readme = "README.md"

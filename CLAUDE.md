@@ -35,7 +35,7 @@ just bump           # increments patch version
 ## Architecture
 
 - **main.py**: Core workflow script with PEP 723 inline dependencies. Searches emoji using the `emoji` library and outputs Alfred-compatible JSON using Pydantic models (`Command`, `CommandContainer`, `Mod`, `Mods`)
-- **info.plist**: Alfred workflow configuration (keyword: `emoji`, bundle ID: `com.jefftriplett.alfred-emoji`)
+- **info.plist**: Alfred workflow configuration (keyword: `emoji`, bundle ID: `com.jefftriplett.alfred-emoji-search`)
 - **justfile**: Build and development commands
 - **pyproject.toml**: Project metadata and bumpver configuration
 - Uses `uv` for package management with Python 3.12+
