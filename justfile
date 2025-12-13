@@ -1,7 +1,7 @@
 set dotenv-load := false
 
 UV_VERSION := "0.5.14"
-WORKFLOW_NAME := "Emoji Lookup"
+WORKFLOW_NAME := "Emoji Search"
 
 @_default:
     just --list

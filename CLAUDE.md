@@ -23,7 +23,7 @@ uv run main.py "heart" --indent 2
 just lint           # runs ruff check --fix and ruff format
 
 # Bundle for Alfred distribution
-just bundle         # creates dist/Emoji Lookup.alfredworkflow
+just bundle         # creates dist/Emoji Search.alfredworkflow
 
 # Clean build artifacts
 just clean          # removes dist/ folder
@@ -58,6 +58,6 @@ just bump           # increments patch version
 The `just bundle` command:
 1. Downloads a standalone `uv` binary (aarch64-apple-darwin) to `dist/`
 2. Copies `main.py` and `info.plist` to `dist/`
-3. Creates `Emoji Lookup.alfredworkflow` zip package
+3. Creates `Emoji Search.alfredworkflow` zip package
 
 The bundled workflow is self-contained and requires no system dependencies.
