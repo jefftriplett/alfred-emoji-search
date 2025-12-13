@@ -30,5 +30,5 @@ push = false
     'version = "{version}"',
 ]
 "info.plist" = [
-    "<string>{version}</string>",
+    '{version}',
 ]
