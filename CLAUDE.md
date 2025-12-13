@@ -9,27 +9,19 @@ Alfred workflow for searching emoji by shortcode and description. Outputs Alfred
 ## Commands
 
 ```bash
-# Install/update dependencies
-just bootstrap      # or: just update
+just bootstrap    # Install dependencies and set up the project
+just run "heart"  # Run the workflow script with optional arguments
+just bundle       # Build the Alfred workflow package for distribution
+just open         # Open the built workflow in Alfred for testing
+just clean        # Remove build artifacts and the dist folder
+just lint         # Run ruff to lint and format Python code
+just lock         # Update the uv.lock file
+just bump         # Bump the version number (CalVer: YYYY.0M.PATCH)
+just update       # Update pip, uv, and sync dependencies
+just fmt          # Format the justfile
 
-# Run the main workflow
-just run "smile"    # search for emoji matching "smile"
-just run "heart"    # search for heart emoji
-
-# Run with pretty-printed JSON
+# Run with pretty-printed JSON output
 uv run main.py "heart" --indent 2
-
-# Linting and formatting
-just lint           # runs ruff check --fix and ruff format
-
-# Bundle for Alfred distribution
-just bundle         # creates dist/Emoji Search.alfredworkflow
-
-# Clean build artifacts
-just clean          # removes dist/ folder
-
-# Bump version (uses bumpver with CalVer YYYY.0M.PATCH)
-just bump           # increments patch version
 ```
 
 ## Architecture

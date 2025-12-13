@@ -46,12 +46,16 @@ emoji thumbs
 ### Commands
 
 ```bash
-just bootstrap    # Install dependencies
-just run "heart"  # Run the script
-just bundle       # Build the workflow
-just clean        # Remove build artifacts
-just lint         # Lint and format code
-just bump         # Bump version (CalVer: YYYY.0M.PATCH)
+just bootstrap    # Install dependencies and set up the project
+just run "heart"  # Run the workflow script with optional arguments
+just bundle       # Build the Alfred workflow package for distribution
+just open         # Open the built workflow in Alfred for testing
+just clean        # Remove build artifacts and the dist folder
+just lint         # Run ruff to lint and format Python code
+just lock         # Update the uv.lock file
+just bump         # Bump the version number (CalVer: YYYY.0M.PATCH)
+just update       # Update pip, uv, and sync dependencies
+just fmt          # Format the justfile
 ```
 
 ## License
