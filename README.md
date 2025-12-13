@@ -60,4 +60,4 @@ just fmt          # Format the justfile
 
 ## License
 
-MIT
+MIT License - Copyright (c) 2025 Jeff Triplett
