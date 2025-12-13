@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Bump version
+        run: just bump
+
+      - name: Get new version
+        id: version
+        run: echo "version=$(grep 'current_version' pyproject.toml | cut -d'"' -f2)" >> $GITHUB_OUTPUT
+
+      - name: Push commit and tag
+        run: |
+          git push
+          git push --tags
+
+      - name: Build workflow bundle
+        run: just bundle
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          files: dist/Emoji Search.alfredworkflow
+          generate_release_notes: true
