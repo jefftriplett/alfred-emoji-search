@@ -34,14 +34,16 @@ jobs:
       - name: Bump version
         run: just bump
 
-      - name: Get new version
-        id: version
-        run: echo "version=$(grep 'current_version' pyproject.toml | cut -d'"' -f2)" >> $GITHUB_OUTPUT
-
       - name: Push commit and tag
         run: |
           git push
           git push --tags
+
+      - name: Get new version
+        id: version
+        run: |
+          VERSION=$(git describe --tags --abbrev=0)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build workflow bundle
         run: just bundle
