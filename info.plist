@@ -58,7 +58,7 @@
 				<key>runningsubtext</key>
 				<string>Searching emoji...</string>
 				<key>script</key>
-				<string>./uv run --quiet ./main.py "{query}"</string>
+				<string>./main.py "{query}"</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>

@@ -48,8 +48,8 @@ uv run main.py "heart" --indent 2
 ## Bundling
 
 The `just bundle` command:
-1. Downloads a standalone `uv` binary (aarch64-apple-darwin) to `dist/`
-2. Copies `main.py` and `info.plist` to `dist/`
+1. Installs dependencies (emoji, pydantic, typer) into `dist/lib/` using `uv pip install --target`
+2. Copies `main.py`, `info.plist`, and `icon.png` to `dist/`
 3. Creates `Emoji Search.alfredworkflow` zip package
 
-The bundled workflow is self-contained and requires no system dependencies.
+The bundled workflow includes all Python dependencies in `lib/` and runs via the system Python 3. The `main.py` script automatically adds the bundled `lib/` directory to `sys.path` when present.

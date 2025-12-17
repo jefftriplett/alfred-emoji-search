@@ -1,4 +1,4 @@
-#!/usr/bin/env -S uv run --quiet
+#!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
@@ -14,6 +14,14 @@ uv run main.py "smile"
 
 Searches emoji by shortcode and description.
 """
+
+import sys
+from pathlib import Path
+
+# Add bundled libraries to path (for Alfred workflow)
+lib_path = Path(__file__).parent / "lib"
+if lib_path.exists():
+    sys.path.insert(0, str(lib_path))
 
 import unicodedata
 

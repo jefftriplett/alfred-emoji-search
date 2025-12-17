@@ -1,6 +1,5 @@
 set dotenv-load := false
 
-UV_VERSION := "0.5.14"
 WORKFLOW_NAME := "Emoji Search"
 
 # List all available recipes
@@ -23,13 +22,9 @@ bundle:
     # Create dist folder
     mkdir -p dist
 
-    # Download uv binary for macOS ARM64 if not present
-    if [ ! -f dist/uv ]; then
-        echo "Downloading uv {{ UV_VERSION }}..."
-        curl -LsSf https://github.com/astral-sh/uv/releases/download/{{ UV_VERSION }}/uv-aarch64-apple-darwin.tar.gz | tar -xz
-        mv uv-aarch64-apple-darwin/uv dist/
-        rm -rf uv-aarch64-apple-darwin
-    fi
+    # Install dependencies into lib folder
+    echo "Installing dependencies..."
+    uv pip install --target dist/lib emoji pydantic typer
 
     # Copy workflow files to dist
     cp info.plist main.py icon.png dist/
@@ -40,7 +35,7 @@ bundle:
     # Build the .alfredworkflow package
     echo "Building {{ WORKFLOW_NAME }}.alfredworkflow..."
     cd dist && rm -f "{{ WORKFLOW_NAME }}.alfredworkflow"
-    zip "{{ WORKFLOW_NAME }}.alfredworkflow" info.plist main.py icon.png uv
+    zip -r "{{ WORKFLOW_NAME }}.alfredworkflow" info.plist main.py icon.png lib/
 
     echo "Done! Created dist/{{ WORKFLOW_NAME }}.alfredworkflow"
 
