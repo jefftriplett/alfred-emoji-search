@@ -26,12 +26,12 @@ uv run main.py "heart" --indent 2
 
 ## Architecture
 
-- **main.py**: Core workflow script with PEP 723 inline dependencies. Searches emoji using the `emoji` library and outputs Alfred-compatible JSON using Pydantic models (`Command`, `CommandContainer`, `Mod`, `Mods`)
+- **main.py**: Core workflow script with PEP 723 inline dependencies. Searches emoji using the `emoji` library and outputs Alfred-compatible JSON
 - **info.plist**: Alfred workflow configuration (keyword: `emoji`, bundle ID: `com.jefftriplett.alfred-emoji-search`)
 - **justfile**: Build and development commands
 - **pyproject.toml**: Project metadata and bumpver configuration
 - Uses `uv` for package management with Python 3.12+
-- Runtime dependencies (in main.py): emoji, pydantic, typer
+- Runtime dependencies (in main.py): emoji
 - Dev dependencies (in pyproject.toml): alfred-workflow, bumpver, ruff
 
 ## How It Works
@@ -48,8 +48,8 @@ uv run main.py "heart" --indent 2
 ## Bundling
 
 The `just bundle` command:
-1. Installs dependencies (emoji, pydantic, typer) into `dist/lib/` using `uv pip install --target`
+1. Installs the `emoji` library into `dist/lib/` using `uv pip install --target`
 2. Copies `main.py`, `info.plist`, and `icon.png` to `dist/`
 3. Creates `Emoji Search.alfredworkflow` zip package
 
-The bundled workflow includes all Python dependencies in `lib/` and runs via the system Python 3. The `main.py` script automatically adds the bundled `lib/` directory to `sys.path` when present.
+The bundled workflow includes the `emoji` library in `lib/` and runs via the system Python 3. The `main.py` script automatically adds the bundled `lib/` directory to `sys.path` when present.

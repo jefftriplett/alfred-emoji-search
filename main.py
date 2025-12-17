@@ -3,8 +3,6 @@
 # requires-python = ">=3.12"
 # dependencies = [
 #     "emoji",
-#     "pydantic",
-#     "typer",
 # ]
 # ///
 """
@@ -15,7 +13,10 @@ uv run main.py "smile"
 Searches emoji by shortcode and description.
 """
 
+import argparse
+import json
 import sys
+import unicodedata
 from pathlib import Path
 
 # Add bundled libraries to path (for Alfred workflow)
@@ -23,33 +24,7 @@ lib_path = Path(__file__).parent / "lib"
 if lib_path.exists():
     sys.path.insert(0, str(lib_path))
 
-import unicodedata
-
 import emoji
-import typer
-from pydantic import BaseModel
-
-
-class Mod(BaseModel):
-    arg: str
-    subtitle: str
-    valid: bool = True
-
-
-class Mods(BaseModel):
-    alt: Mod | None = None
-    cmd: Mod | None = None
-
-
-class Command(BaseModel):
-    arg: str
-    subtitle: str
-    title: str
-    mods: Mods | None = None
-
-
-class CommandContainer(BaseModel):
-    items: list[Command]
 
 
 def get_emoji_data() -> list[tuple[str, str, str]]:
@@ -113,46 +88,52 @@ def search_emoji(query: str) -> list[tuple[str, str, str]]:
     return matches[:50]  # Limit results
 
 
-def main(query: str = typer.Argument(""), indent: int = None):
+def main(query: str = "", indent: int | None = None):
     """
     Search for emoji by shortcode or description.
     """
     matches = search_emoji(query)
 
     if not matches:
-        container = CommandContainer(
-            items=[
-                Command(
-                    arg="",
-                    subtitle="No emoji found",
-                    title=f"No results for '{query}'",
-                )
+        result = {
+            "items": [
+                {
+                    "arg": "",
+                    "subtitle": "No emoji found",
+                    "title": f"No results for '{query}'",
+                }
             ]
-        )
+        }
     else:
-        container = CommandContainer(
-            items=[
-                Command(
-                    arg=emoji_char,
-                    subtitle=f"{shortcode} - {description}",
-                    title=f"{emoji_char}  {shortcode.strip(':')}",
-                    mods=Mods(
-                        alt=Mod(
-                            arg=shortcode,
-                            subtitle=f"Copy shortcode: {shortcode}",
-                        ),
-                        cmd=Mod(
-                            arg=shortcode.strip(":"),
-                            subtitle=f"Copy without colons: {shortcode.strip(':')}",
-                        ),
-                    ),
-                )
+        result = {
+            "items": [
+                {
+                    "arg": emoji_char,
+                    "subtitle": f"{shortcode} - {description}",
+                    "title": f"{emoji_char}  {shortcode.strip(':')}",
+                    "mods": {
+                        "alt": {
+                            "arg": shortcode,
+                            "subtitle": f"Copy shortcode: {shortcode}",
+                            "valid": True,
+                        },
+                        "cmd": {
+                            "arg": shortcode.strip(":"),
+                            "subtitle": f"Copy without colons: {shortcode.strip(':')}",
+                            "valid": True,
+                        },
+                    },
+                }
                 for emoji_char, shortcode, description in matches
             ]
-        )
+        }
 
-    print(container.model_dump_json(indent=indent))
+    print(json.dumps(result, indent=indent))
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    parser = argparse.ArgumentParser(description="Search emoji by shortcode or description")
+    parser.add_argument("query", nargs="?", default="", help="Search query")
+    parser.add_argument("--indent", type=int, default=None, help="JSON indent level")
+    args = parser.parse_args()
+    main(args.query, args.indent)

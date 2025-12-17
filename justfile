@@ -24,7 +24,7 @@ bundle:
 
     # Install dependencies into lib folder
     echo "Installing dependencies..."
-    uv pip install --target dist/lib emoji pydantic typer
+    uv pip install --target dist/lib emoji
 
     # Copy workflow files to dist
     cp info.plist main.py icon.png dist/
