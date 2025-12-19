@@ -19,6 +19,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>copy-to-clipboard</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>record-usage</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Jeff Triplett</string>
@@ -96,6 +109,29 @@
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./main.py --record "{query}"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>record-usage</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Emoji Search Workflow
@@ -121,6 +157,13 @@ Select an emoji to copy it to your clipboard.</string>
 		<dict>
 			<key>xpos</key>
 			<real>450</real>
+			<key>ypos</key>
+			<real>50</real>
+		</dict>
+		<key>record-usage</key>
+		<dict>
+			<key>xpos</key>
+			<real>750</real>
 			<key>ypos</key>
 			<real>50</real>
 		</dict>
