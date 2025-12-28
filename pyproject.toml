@@ -32,3 +32,6 @@ push = false
 "info.plist" = [
     '{version}',
 ]
+"update.json" = [
+    '"version": "{version}"',
+]
