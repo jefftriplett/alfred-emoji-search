@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "alfred-workflow",
     "bumpver",
-    "emoji",
+    "em-keyboard",
     "pydantic",
     "ruff",
     "typer",

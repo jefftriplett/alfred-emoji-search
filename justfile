@@ -24,7 +24,7 @@ bundle:
 
     # Install dependencies into lib folder
     echo "Installing dependencies..."
-    uv pip install --target dist/lib emoji
+    uv pip install --target dist/lib em-keyboard
 
     # Copy workflow files to dist
     cp info.plist main.py icon.png dist/

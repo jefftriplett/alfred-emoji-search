@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#     "emoji",
+#     "em-keyboard",
 # ]
 # ///
 """
@@ -11,12 +11,12 @@ Emoji lookup Alfred workflow
 uv run main.py "smile"
 
 Searches emoji by shortcode and description.
+Uses em-keyboard's emoji database for rich keyword search.
 """
 
 import argparse
 import json
 import sys
-import unicodedata
 from pathlib import Path
 
 # Add bundled libraries to path (for Alfred workflow)
@@ -24,36 +24,29 @@ lib_path = Path(__file__).parent / "lib"
 if lib_path.exists():
     sys.path.insert(0, str(lib_path))
 
-import emoji
+from em.cli import parse_emojis
 
 
-def get_emoji_data() -> list[tuple[str, str, str]]:
+def get_emoji_data() -> list[tuple[str, str, list[str]]]:
     """
-    Returns a list of (emoji_char, shortcode, description) tuples.
+    Returns a list of (emoji_char, shortcode, keywords) tuples.
+    Uses em-keyboard's emoji database.
     """
     results = []
+    lookup = parse_emojis()
 
-    for emoji_char, data in emoji.EMOJI_DATA.items():
-        # Get the shortcode (e.g., :smile:)
-        shortcode = data.get("en", "")
-        if shortcode:
-            # Clean up the shortcode format
-            shortcode_clean = shortcode.replace("_", " ").strip(":")
-
-            # Get unicode name as description
-            try:
-                description = unicodedata.name(emoji_char, "").lower()
-            except (TypeError, ValueError):
-                description = shortcode_clean
-
-            results.append((emoji_char, shortcode, description))
+    for emoji_char, keywords in lookup.items():
+        if keywords:
+            # First keyword is the primary shortcode
+            shortcode = f":{keywords[0]}:"
+            results.append((emoji_char, shortcode, keywords))
 
     return results
 
 
 def search_emoji(query: str) -> list[tuple[str, str, str]]:
     """
-    Search emoji by shortcode or description.
+    Search emoji by shortcode or keywords.
     Returns matching (emoji_char, shortcode, description) tuples.
     """
     query = query.lower().strip()
@@ -63,12 +56,12 @@ def search_emoji(query: str) -> list[tuple[str, str, str]]:
     all_emoji = get_emoji_data()
     matches = []
 
-    for emoji_char, shortcode, description in all_emoji:
-        shortcode_lower = shortcode.lower()
-        description_lower = description.lower()
-
-        # Check if query matches shortcode or description
-        if query in shortcode_lower or query in description_lower:
+    for emoji_char, shortcode, keywords in all_emoji:
+        # Check if query matches any keyword
+        keywords_lower = [kw.lower() for kw in keywords]
+        if any(query in kw for kw in keywords_lower):
+            # Use primary shortcode as description for display
+            description = keywords[0].replace("_", " ")
             matches.append((emoji_char, shortcode, description))
 
     # Sort by relevance: exact shortcode match first, then by shortcode length
