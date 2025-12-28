@@ -125,6 +125,13 @@ Select an emoji to copy it to your clipboard.</string>
 			<real>50</real>
 		</dict>
 	</dict>
+	<key>update</key>
+	<dict>
+		<key>source</key>
+		<string>https://raw.githubusercontent.com/jefftriplett/alfred-emoji-search/main/update.json</string>
+		<key>type</key>
+		<string>json</string>
+	</dict>
 	<key>userconfigurationconfig</key>
 	<array/>
 	<key>variablesdontexport</key>
