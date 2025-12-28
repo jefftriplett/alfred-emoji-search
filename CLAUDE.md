@@ -26,18 +26,18 @@ uv run main.py "heart" --indent 2
 
 ## Architecture
 
-- **main.py**: Core workflow script with PEP 723 inline dependencies. Searches emoji using the `emoji` library and outputs Alfred-compatible JSON
+- **main.py**: Core workflow script with PEP 723 inline dependencies. Searches emoji using `em-keyboard`'s emoji database and outputs Alfred-compatible JSON
 - **info.plist**: Alfred workflow configuration (keyword: `emoji`, bundle ID: `com.jefftriplett.alfred-emoji-search`)
 - **justfile**: Build and development commands
 - **pyproject.toml**: Project metadata and bumpver configuration
 - Uses `uv` for package management with Python 3.12+
-- Runtime dependencies (in main.py): emoji
+- Runtime dependencies (in main.py): em-keyboard
 - Dev dependencies (in pyproject.toml): alfred-workflow, bumpver, ruff
 
 ## How It Works
 
-1. Loads emoji data from the `emoji` library's `EMOJI_DATA` dictionary
-2. Searches shortcodes (e.g., `:smile:`) and Unicode descriptions via `unicodedata.name()`
+1. Loads emoji data from `em-keyboard`'s `parse_emojis()` function (rich keyword database)
+2. Searches shortcodes and keywords (e.g., "smile", "happy", "joy", ":d")
 3. Returns matches sorted by relevance (exact match, starts with, contains)
 4. Limits results to 50 items
 5. Outputs JSON for Alfred Script Filter with:
@@ -48,8 +48,8 @@ uv run main.py "heart" --indent 2
 ## Bundling
 
 The `just bundle` command:
-1. Installs the `emoji` library into `dist/lib/` using `uv pip install --target`
+1. Installs `em-keyboard` into `dist/lib/` using `uv pip install --target`
 2. Copies `main.py`, `info.plist`, and `icon.png` to `dist/`
 3. Creates `Emoji Search.alfredworkflow` zip package
 
-The bundled workflow includes the `emoji` library in `lib/` and runs via the system Python 3. The `main.py` script automatically adds the bundled `lib/` directory to `sys.path` when present.
+The bundled workflow includes `em-keyboard` in `lib/` and runs via the system Python 3. The `main.py` script automatically adds the bundled `lib/` directory to `sys.path` when present.
