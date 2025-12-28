@@ -12,7 +12,7 @@ WORKFLOW_NAME := "Emoji Search"
 
 # Bump the version number (CalVer: YYYY.0M.PATCH)
 @bump:
-    uv run bumpver update --patch
+    uv tool run bumpver update --patch
 
 # Build the Alfred workflow package for distribution
 bundle:
