@@ -24,7 +24,7 @@ lib_path = Path(__file__).parent / "lib"
 if lib_path.exists():
     sys.path.insert(0, str(lib_path))
 
-from em.cli import parse_emojis
+from em.cli import parse_emojis  # noqa: E402
 
 
 def get_emoji_data() -> list[tuple[str, str, list[str]]]:
@@ -125,7 +125,9 @@ def main(query: str = "", indent: int | None = None):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Search emoji by shortcode or description")
+    parser = argparse.ArgumentParser(
+        description="Search emoji by shortcode or description"
+    )
     parser.add_argument("query", nargs="?", default="", help="Search query")
     parser.add_argument("--indent", type=int, default=None, help="JSON indent level")
     args = parser.parse_args()
