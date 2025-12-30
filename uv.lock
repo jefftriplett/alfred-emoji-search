@@ -4,25 +4,33 @@ requires-python = ">=3.12"
 
 [[package]]
 name = "alfred-emoji-search"
-version = "2025.12.5"
+version = "2025.12.8"
 source = { virtual = "." }
 dependencies = [
     { name = "alfred-workflow" },
-    { name = "bumpver" },
     { name = "em-keyboard" },
     { name = "pydantic" },
-    { name = "ruff" },
     { name = "typer" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "bumpver" },
+    { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "alfred-workflow" },
-    { name = "bumpver" },
     { name = "em-keyboard" },
     { name = "pydantic" },
-    { name = "ruff" },
     { name = "typer" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "bumpver" },
+    { name = "ruff" },
 ]
 
 [[package]]
