@@ -49,8 +49,8 @@ bundle:
 
 # Run ruff to lint and format Python code
 @lint:
-    uv run ruff check --fix .
-    uv run ruff format .
+    uv tool run ruff check --fix .
+    uv tool run ruff format .
 
 # Update the uv.lock file
 @lock:
