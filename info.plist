@@ -28,12 +28,22 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>open-url</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>Open in browser</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Jeff Triplett</string>
 	<key>description</key>
-	<string>Search and copy emoji by shortcode or description</string>
+	<string>Search and copy emoji by shortcode or description. Type "emoji version" for info and GitHub link.</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
@@ -129,6 +139,25 @@
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string>{query}</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>open-url</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Emoji Search Workflow
@@ -139,6 +168,7 @@ Examples:
 - emoji heart
 - emoji thumbs
 - emoji smile
+- emoji version (show version and links)
 
 Select an emoji to copy it to your clipboard.
 
@@ -165,6 +195,13 @@ Frequently used emoji appear when you open the search with no query.</string>
 			<real>450</real>
 			<key>ypos</key>
 			<real>150</real>
+		</dict>
+		<key>open-url</key>
+		<dict>
+			<key>xpos</key>
+			<real>450</real>
+			<key>ypos</key>
+			<real>250</real>
 		</dict>
 	</dict>
 	<key>update</key>

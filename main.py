@@ -26,6 +26,8 @@ if lib_path.exists():
 
 from em.cli import do_find, parse_emojis  # noqa: E402
 
+VERSION = "2026.7.2"
+GITHUB_URL = "https://github.com/jefftriplett/alfred-emoji-search"
 HISTORY_DIR = Path.home() / ".config" / "alfred-emoji-search"
 HISTORY_FILE = HISTORY_DIR / "history.json"
 
@@ -141,6 +143,38 @@ def format_item(
     }
 
 
+def get_version_info() -> dict:
+    """Return Alfred items showing version and GitHub info."""
+    return {
+        "items": [
+            {
+                "title": f"✨ Emoji Search v{VERSION}",
+                "subtitle": "Press Enter to copy version",
+                "arg": VERSION,
+                "valid": True,
+            },
+            {
+                "title": "📦 View on GitHub",
+                "subtitle": "⏎ Copy URL  ·  ⌘⏎ Open in browser",
+                "arg": GITHUB_URL,
+                "valid": True,
+            },
+            {
+                "title": "🐛 Report an Issue",
+                "subtitle": "⏎ Copy URL  ·  ⌘⏎ Open in browser",
+                "arg": f"{GITHUB_URL}/issues",
+                "valid": True,
+            },
+            {
+                "title": "📥 Check for Updates",
+                "subtitle": "⏎ Copy URL  ·  ⌘⏎ Open in browser",
+                "arg": f"{GITHUB_URL}/releases",
+                "valid": True,
+            },
+        ]
+    }
+
+
 def main(query: str = "", indent: int | None = None, record: str | None = None):
     """
     Search for emoji by shortcode or description.
@@ -150,6 +184,12 @@ def main(query: str = "", indent: int | None = None, record: str | None = None):
         return
 
     query = query.strip()
+
+    # Handle special commands
+    if query.lower() in ("version", "about", "info", "help"):
+        result = get_version_info()
+        print(json.dumps(result, indent=indent))
+        return
 
     if not query:
         frequent = get_frequent_emoji()
