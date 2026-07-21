@@ -18,6 +18,7 @@ emoji heart
 emoji fire
 emoji party
 emoji thumbs
+emoji version   # Show version info and GitHub links
 ```
 
 ### Keyboard Shortcuts
@@ -62,7 +63,7 @@ just open         # Open the built workflow in Alfred for testing
 just clean        # Remove build artifacts and the dist folder
 just lint         # Run ruff to lint and format Python code
 just lock         # Update the uv.lock file
-just bump         # Bump the version number (CalVer: YYYY.0M.PATCH)
+just bump         # Bump the version number (CalVer: YYYY.MM.PATCH)
 just update       # Update pip, uv, and sync dependencies
 just fmt          # Format the justfile
 ```
