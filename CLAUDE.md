@@ -36,14 +36,23 @@ uv run main.py "heart" --indent 2
 
 ## How It Works
 
-1. Loads emoji data from `em-keyboard`'s `parse_emojis()` function (rich keyword database)
+1. Uses `em-keyboard`'s `do_find()` for searching and `parse_emojis()` for emoji data
 2. Searches shortcodes and keywords (e.g., "smile", "happy", "joy", ":d")
 3. Returns matches sorted by relevance (exact match, starts with, contains)
-4. Limits results to 50 items
-5. Outputs JSON for Alfred Script Filter with:
+4. Boosts frequently used emoji in search results
+5. Limits results to 50 items
+6. Outputs JSON for Alfred Script Filter with:
    - Default (Enter): copies emoji character
    - Alt modifier: copies shortcode with colons (e.g., `:party_popper:`)
    - Cmd modifier: copies shortcode without colons (e.g., `party_popper`)
+
+## History Tracking
+
+- Stores usage history in `~/.config/alfred-emoji-search/history.json`
+- When query is empty, shows frequently used emoji sorted by usage count
+- Frequently used emoji are boosted in search results
+- Usage count displayed in subtitle (e.g., "used 5x")
+- History recorded via `--record` flag when emoji is selected
 
 ## Bundling
 

@@ -18,6 +18,16 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>record-usage</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 	</dict>
 	<key>createdby</key>
@@ -96,6 +106,29 @@
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./main.py --record "{query}"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>record-usage</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Emoji Search Workflow
@@ -107,7 +140,9 @@ Examples:
 - emoji thumbs
 - emoji smile
 
-Select an emoji to copy it to your clipboard.</string>
+Select an emoji to copy it to your clipboard.
+
+Frequently used emoji appear when you open the search with no query.</string>
 	<key>uidata</key>
 	<dict>
 		<key>script-filter</key>
@@ -123,6 +158,13 @@ Select an emoji to copy it to your clipboard.</string>
 			<real>450</real>
 			<key>ypos</key>
 			<real>50</real>
+		</dict>
+		<key>record-usage</key>
+		<dict>
+			<key>xpos</key>
+			<real>450</real>
+			<key>ypos</key>
+			<real>150</real>
 		</dict>
 	</dict>
 	<key>update</key>

@@ -30,10 +30,19 @@ emoji thumbs
 
 ## How It Works
 
-- Searches both shortcodes (`:fire:`) and Unicode descriptions
+- Searches both shortcodes (`:fire:`) and keywords via [em-keyboard](https://github.com/kennethreitz/em-keyboard)
 - Results sorted by relevance: exact match → starts with → contains
+- Frequently used emoji are boosted in search results
+- Shows frequently used emoji when query is empty
 - Returns up to 50 results per search
-- Self-contained workflow with bundled `uv` binary (no system dependencies required)
+
+## Data Storage
+
+Usage history is stored following the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
+
+```
+~/.config/alfred-emoji-search/history.json
+```
 
 ## Development
 
