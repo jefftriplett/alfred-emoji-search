@@ -27,7 +27,8 @@ bundle:
     uv pip install --target dist/lib em-keyboard
 
     # Copy workflow files to dist
-    cp info.plist main.py icon.png dist/
+    cp info.plist icon.png dist/
+    cp src/main.py dist/main.py
 
     # Make main.py executable
     chmod +x dist/main.py
@@ -62,7 +63,7 @@ bundle:
 
 # Run the workflow script with optional arguments
 @run *ARGS:
-    uv run main.py {{ ARGS }}
+    uv run src/main.py {{ ARGS }}
 
 # Update pip, uv, and sync dependencies
 @update:

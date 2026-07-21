@@ -21,12 +21,12 @@ just update       # Update pip, uv, and sync dependencies
 just fmt          # Format the justfile
 
 # Run with pretty-printed JSON output
-uv run main.py "heart" --indent 2
+uv run src/main.py "heart" --indent 2
 ```
 
 ## Architecture
 
-- **main.py**: Core workflow script with PEP 723 inline dependencies. Searches emoji using `em-keyboard`'s emoji database and outputs Alfred-compatible JSON
+- **src/main.py**: Core workflow script with PEP 723 inline dependencies. Searches emoji using `em-keyboard`'s emoji database and outputs Alfred-compatible JSON
 - **info.plist**: Alfred workflow configuration (keyword: `emoji`, bundle ID: `com.jefftriplett.alfred-emoji-search`)
 - **justfile**: Build and development commands
 - **pyproject.toml**: Project metadata and bumpver configuration

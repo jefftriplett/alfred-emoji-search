@@ -24,6 +24,7 @@ lib_path = Path(__file__).parent / "lib"
 if lib_path.exists():
     sys.path.insert(0, str(lib_path))
 
+from em._version import __version__ as EM_VERSION  # noqa: E402
 from em.cli import do_find, parse_emojis  # noqa: E402
 
 VERSION = "2026.7.2"
@@ -149,7 +150,7 @@ def get_version_info() -> dict:
         "items": [
             {
                 "title": f"✨ Emoji Search v{VERSION}",
-                "subtitle": "Press Enter to copy version",
+                "subtitle": f"Powered by em-keyboard v{EM_VERSION}",
                 "arg": VERSION,
                 "valid": True,
             },
