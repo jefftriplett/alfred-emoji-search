@@ -36,25 +36,39 @@ SEARCH_HISTORY_FILE = HISTORY_DIR / "search_history.json"
 
 
 def _env_flag(name: str, default: bool = True) -> bool:
-    """
-    Read a boolean setting from the environment (set via Alfred's workflow
-    configuration). Unset/empty falls back to ``default`` so existing installs
+    """Read a boolean Alfred workflow environment variable.
+
+    Alfred passes checkbox settings as "1"/"0" (or "true"/"false").
+    Defaults to ``default`` when the variable is unset so existing installs
     keep working before the settings are configured.
     """
     value = os.environ.get(name)
-    if value is None or value.strip() == "":
+    if value is None or value == "":
         return default
-    return value.strip().lower() not in ("0", "false", "no", "off")
+    return value.strip().lower() in ("1", "true", "yes", "on")
 
 
-def log_search_enabled() -> bool:
-    """Whether search terms should be recorded to disk."""
-    return _env_flag("log_search_history", True)
+def load_search_history() -> dict[str, int]:
+    """Load search-term history from disk."""
+    if SEARCH_HISTORY_FILE.exists():
+        try:
+            return json.loads(SEARCH_HISTORY_FILE.read_text())
+        except (json.JSONDecodeError, OSError):
+            return {}
+    return {}
 
 
-def weight_by_search_enabled() -> bool:
-    """Whether search history should influence result ordering."""
-    return _env_flag("weight_by_search_history", True)
+def record_search(term: str) -> None:
+    """Record a search term, unless logging is disabled."""
+    if not _env_flag("log_search_history"):
+        return
+    term = term.lower().strip()
+    if not term:
+        return
+    history = load_search_history()
+    history[term] = history.get(term, 0) + 1
+    HISTORY_DIR.mkdir(parents=True, exist_ok=True)
+    SEARCH_HISTORY_FILE.write_text(json.dumps(history))
 
 
 def load_history() -> dict[str, int]:
@@ -78,34 +92,6 @@ def record_usage(emoji_char: str) -> None:
     history = load_history()
     history[emoji_char] = history.get(emoji_char, 0) + 1
     save_history(history)
-
-
-def load_search_history() -> dict[str, int]:
-    """Load search-term history (term -> times searched) from disk."""
-    if SEARCH_HISTORY_FILE.exists():
-        try:
-            return json.loads(SEARCH_HISTORY_FILE.read_text())
-        except (json.JSONDecodeError, OSError):
-            return {}
-    return {}
-
-
-def save_search_history(history: dict[str, int]) -> None:
-    """Save search-term history to disk."""
-    HISTORY_DIR.mkdir(parents=True, exist_ok=True)
-    SEARCH_HISTORY_FILE.write_text(json.dumps(history))
-
-
-def record_search(query: str) -> None:
-    """Record that a search term was used (respects the logging setting)."""
-    if not log_search_enabled():
-        return
-    query = query.lower().strip()
-    if not query:
-        return
-    history = load_search_history()
-    history[query] = history.get(query, 0) + 1
-    save_search_history(history)
 
 
 def get_frequent_emoji(limit: int = 20) -> list[tuple[str, str, str, int]]:
@@ -141,40 +127,43 @@ def search_emoji(query: str) -> list[tuple[str, str, str, int]]:
 
     history = load_history()
     lookup = parse_emojis()
-    search_history = load_search_history() if weight_by_search_enabled() else {}
+
+    # Search history weighting (opt-out via workflow setting)
+    weight_by_search = _env_flag("weight_by_search_history")
+    search_history = load_search_history() if weight_by_search else {}
 
     # Use em-keyboard's built-in search
     results = do_find(lookup, (query,))
 
-    scored = []
+    matches = []
     for name, emoji_char in results:
         shortcode = f":{name}:"
         description = name.replace("_", " ")
         count = history.get(emoji_char, 0)
-        # Boost emoji whose keywords match terms we've searched before. Matching
-        # whole keywords means partial keystrokes ("he", "hea") logged while
-        # typing don't skew results — only completed terms line up.
-        search_score = sum(
-            search_history.get(keyword.lower(), 0)
-            for keyword in lookup.get(emoji_char, ())
+        # Sum search counts of this emoji's keywords. Only whole-keyword
+        # matches count, so partial keystrokes logged mid-typing don't skew.
+        search_score = (
+            sum(search_history.get(kw, 0) for kw in lookup.get(emoji_char, []))
+            if search_history
+            else 0
         )
-        scored.append((emoji_char, shortcode, description, count, search_score))
+        matches.append((emoji_char, shortcode, description, count, search_score))
 
-    # Re-sort to boost frequently used and frequently searched emoji
+    # Re-sort to boost frequently used and previously searched emoji
     def sort_key(item):
         _, shortcode, _, count, search_score = item
-        term = shortcode.lower().strip(":")
-        if query == term:
+        shortcode_lower = shortcode.lower()
+        if query == shortcode_lower.strip(":"):
             priority = 0
-        elif term.startswith(query):
+        elif shortcode_lower.strip(":").startswith(query):
             priority = 1
         else:
             priority = 2
         return (priority, -(count + search_score), len(shortcode))
 
-    scored.sort(key=sort_key)
+    matches.sort(key=sort_key)
 
-    return [(e, s, d, c) for e, s, d, c, _ in scored[:50]]
+    return [(e, s, d, c) for e, s, d, c, _ in matches[:50]]
 
 
 def format_item(
