@@ -34,16 +34,29 @@ emoji version   # Show version info and GitHub links
 - Searches both shortcodes (`:fire:`) and keywords via [em-keyboard](https://github.com/kennethreitz/em-keyboard)
 - Results sorted by relevance: exact match → starts with → contains
 - Frequently used emoji are boosted in search results
+- Terms you've searched before nudge matching emoji higher in the results
 - Shows frequently used emoji when query is empty
 - Returns up to 50 results per search
 
+## Settings
+
+Configure the workflow in Alfred (right-click the workflow → **Configure Workflow…**):
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Log search history | On | Record the terms you search to `search_history.json`. Turn off to stop logging searches entirely. |
+| Personalize ordering | On | Use your search history to weight the order of results. Turn off to rank results without it. |
+
 ## Data Storage
 
-Usage history is stored following the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
+History is stored following the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
 
 ```
-~/.config/alfred-emoji-search/history.json
+~/.config/alfred-emoji-search/history.json         # emoji usage counts
+~/.config/alfred-emoji-search/search_history.json  # search-term counts
 ```
+
+To clear your search history, delete `search_history.json` (or turn off logging).
 
 ## Development
 

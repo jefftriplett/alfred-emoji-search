@@ -212,7 +212,46 @@ Frequently used emoji appear when you open the search with no query.</string>
 		<string>json</string>
 	</dict>
 	<key>userconfigurationconfig</key>
-	<array/>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Record the terms you search</string>
+			</dict>
+			<key>description</key>
+			<string>Save your search terms to ~/.config/alfred-emoji-search/search_history.json. Turn off to stop logging searches.</string>
+			<key>label</key>
+			<string>Log search history</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>log_search_history</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Boost results by your search history</string>
+			</dict>
+			<key>description</key>
+			<string>Use previously searched terms to weight the order of results. Turn off to rank results without search history.</string>
+			<key>label</key>
+			<string>Personalize ordering</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>weight_by_search_history</string>
+		</dict>
+	</array>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>

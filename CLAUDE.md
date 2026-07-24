@@ -54,6 +54,17 @@ uv run src/main.py "heart" --indent 2
 - Usage count displayed in subtitle (e.g., "used 5x")
 - History recorded via `--record` flag when emoji is selected
 
+## Search History & Weighting
+
+- Stores search-term counts in `~/.config/alfred-emoji-search/search_history.json`
+- Each non-empty search records its term (via `record_search()` in `main()`)
+- `search_emoji()` adds a `search_score` per emoji: the summed search counts of that emoji's keywords. Only whole-keyword matches count, so partial keystrokes ("he", "hea") logged mid-typing don't skew results
+- Final ordering sorts by `(match priority, -(usage_count + search_score), shortcode length)`
+- Two settings, exposed as Alfred workflow environment variables and read via `_env_flag()`:
+  - `log_search_history` — when off, `record_search()` is a no-op (nothing logged)
+  - `weight_by_search_history` — when off, search history is ignored when ordering results
+- Both default to on when unset (so existing installs keep working before the settings are configured)
+
 ## Bundling
 
 The `just bundle` command:

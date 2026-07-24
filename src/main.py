@@ -16,6 +16,7 @@ Uses em-keyboard's emoji database for rich keyword search.
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -31,6 +32,43 @@ VERSION = "2026.7.4"
 GITHUB_URL = "https://github.com/jefftriplett/alfred-emoji-search"
 HISTORY_DIR = Path.home() / ".config" / "alfred-emoji-search"
 HISTORY_FILE = HISTORY_DIR / "history.json"
+SEARCH_HISTORY_FILE = HISTORY_DIR / "search_history.json"
+
+
+def _env_flag(name: str, default: bool = True) -> bool:
+    """Read a boolean Alfred workflow environment variable.
+
+    Alfred passes checkbox settings as "1"/"0" (or "true"/"false").
+    Defaults to ``default`` when the variable is unset so existing installs
+    keep working before the settings are configured.
+    """
+    value = os.environ.get(name)
+    if value is None or value == "":
+        return default
+    return value.strip().lower() in ("1", "true", "yes", "on")
+
+
+def load_search_history() -> dict[str, int]:
+    """Load search-term history from disk."""
+    if SEARCH_HISTORY_FILE.exists():
+        try:
+            return json.loads(SEARCH_HISTORY_FILE.read_text())
+        except (json.JSONDecodeError, OSError):
+            return {}
+    return {}
+
+
+def record_search(term: str) -> None:
+    """Record a search term, unless logging is disabled."""
+    if not _env_flag("log_search_history"):
+        return
+    term = term.lower().strip()
+    if not term:
+        return
+    history = load_search_history()
+    history[term] = history.get(term, 0) + 1
+    HISTORY_DIR.mkdir(parents=True, exist_ok=True)
+    SEARCH_HISTORY_FILE.write_text(json.dumps(history))
 
 
 def load_history() -> dict[str, int]:
@@ -90,6 +128,10 @@ def search_emoji(query: str) -> list[tuple[str, str, str, int]]:
     history = load_history()
     lookup = parse_emojis()
 
+    # Search history weighting (opt-out via workflow setting)
+    weight_by_search = _env_flag("weight_by_search_history")
+    search_history = load_search_history() if weight_by_search else {}
+
     # Use em-keyboard's built-in search
     results = do_find(lookup, (query,))
 
@@ -98,11 +140,18 @@ def search_emoji(query: str) -> list[tuple[str, str, str, int]]:
         shortcode = f":{name}:"
         description = name.replace("_", " ")
         count = history.get(emoji_char, 0)
-        matches.append((emoji_char, shortcode, description, count))
+        # Sum search counts of this emoji's keywords. Only whole-keyword
+        # matches count, so partial keystrokes logged mid-typing don't skew.
+        search_score = (
+            sum(search_history.get(kw, 0) for kw in lookup.get(emoji_char, []))
+            if search_history
+            else 0
+        )
+        matches.append((emoji_char, shortcode, description, count, search_score))
 
-    # Re-sort to boost frequently used emoji
+    # Re-sort to boost frequently used and previously searched emoji
     def sort_key(item):
-        emoji_char, shortcode, _, count = item
+        _, shortcode, _, count, search_score = item
         shortcode_lower = shortcode.lower()
         if query == shortcode_lower.strip(":"):
             priority = 0
@@ -110,11 +159,11 @@ def search_emoji(query: str) -> list[tuple[str, str, str, int]]:
             priority = 1
         else:
             priority = 2
-        return (priority, -count, len(shortcode))
+        return (priority, -(count + search_score), len(shortcode))
 
     matches.sort(key=sort_key)
 
-    return matches[:50]
+    return [(e, s, d, c) for e, s, d, c, _ in matches[:50]]
 
 
 def format_item(
@@ -213,6 +262,7 @@ def main(query: str = "", indent: int | None = None, record: str | None = None):
                 ]
             }
     else:
+        record_search(query)
         matches = search_emoji(query)
         if not matches:
             result = {
