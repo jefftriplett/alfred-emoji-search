@@ -28,7 +28,7 @@ if lib_path.exists():
 from em._version import __version__ as EM_VERSION  # noqa: E402
 from em.cli import do_find, parse_emojis  # noqa: E402
 
-VERSION = "2026.7.4"
+VERSION = "2026.7.5"
 GITHUB_URL = "https://github.com/jefftriplett/alfred-emoji-search"
 HISTORY_DIR = Path.home() / ".config" / "alfred-emoji-search"
 HISTORY_FILE = HISTORY_DIR / "history.json"
