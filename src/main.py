@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#     "em-keyboard",
+#     "em-keyboard>=5.4.0",
 # ]
 # ///
 """

@@ -4,7 +4,7 @@ requires-python = ">=3.12"
 
 [[package]]
 name = "alfred-emoji-search"
-version = "2026.7.2"
+version = "2026.7.4"
 source = { virtual = "." }
 dependencies = [
     { name = "alfred-workflow" },
@@ -19,7 +19,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "alfred-workflow" },
-    { name = "em-keyboard" },
+    { name = "em-keyboard", specifier = ">=5.4.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -69,14 +69,14 @@ wheels = [
 
 [[package]]
 name = "em-keyboard"
-version = "5.3.0"
+version = "5.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyperclip" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c5/9b/d4abb30eab5e47a45074123ebd05e933fa7cbfad610b0a3a5a9844095c37/em_keyboard-5.3.0.tar.gz", hash = "sha256:0ddbc8e950fec5c074b503deb7c816fb75bb6ec599f7a48e9b32ca222575fc6f", size = 61047, upload-time = "2025-09-29T12:56:22.852Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c6/e1/baba3f8c6f88f7c60cdf37fb25e670ceb8fd02f4ae01044c717f0e581f6b/em_keyboard-5.4.0.tar.gz", hash = "sha256:51a675b91cd958ea9307d71f59898ba737a1312f3ca33abfdcb8a73b7ade9d64", size = 61851, upload-time = "2026-07-24T16:45:40.448Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/ca/d2fb48540efdae040a14ea577619675ffdc834a347f209a082926753054a/em_keyboard-5.3.0-py3-none-any.whl", hash = "sha256:3519ca984c982c1417cdb766fb8d008db236084984727e982572fa4fac82c990", size = 55322, upload-time = "2025-09-29T12:56:21.627Z" },
+    { url = "https://files.pythonhosted.org/packages/d2/65/84aed5b90979809b8a7e2224d792960cc5a0719799a2b8050253cee7a5bd/em_keyboard-5.4.0-py3-none-any.whl", hash = "sha256:f710338211aff4835ea39d391d82f3f8b9e28be84828dd11d378b5829ae311aa", size = 56284, upload-time = "2026-07-24T16:45:39.049Z" },
 ]
 
 [[package]]
