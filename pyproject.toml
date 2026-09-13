@@ -39,3 +39,7 @@ push = false
 "update.json" = [
     '"version": "{version}"',
 ]
+
+"uv.lock" = [
+    'version = "{version}"',
+]

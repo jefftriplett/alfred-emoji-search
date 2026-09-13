@@ -21,6 +21,9 @@ jobs:
       - name: Install just
         uses: extractions/setup-just@v4
 
+      - name: Run regression tests
+        run: just test
+
       - name: Build workflow bundle
         run: just bundle
 

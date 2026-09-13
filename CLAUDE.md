@@ -26,12 +26,12 @@ uv run src/main.py "heart" --indent 2
 
 ## Architecture
 
-- **src/main.py**: Core workflow script with PEP 723 inline dependencies. Searches emoji using `em-keyboard`'s emoji database and outputs Alfred-compatible JSON
+- **src/main.py**: Core workflow script using the project’s locked dependencies. Searches emoji using `em-keyboard`'s emoji database and outputs Alfred-compatible JSON
 - **info.plist**: Alfred workflow configuration (keyword: `emoji`, bundle ID: `com.jefftriplett.alfred-emoji-search`)
 - **justfile**: Build and development commands
 - **pyproject.toml**: Project metadata and bumpver configuration
 - Uses `uv` for package management with Python 3.12+
-- Runtime dependencies (in main.py): em-keyboard
+- Runtime dependency: em-keyboard
 - Dev dependencies (in pyproject.toml): alfred-workflow, bumpver, ruff
 
 ## How It Works
@@ -57,7 +57,7 @@ uv run src/main.py "heart" --indent 2
 ## Search History & Weighting
 
 - Stores search-term counts in `~/.config/alfred-emoji-search/search_history.json`
-- Each non-empty search records its term (via `record_search()` in `main()`)
+- Selecting an emoji records the normalized search term via `--record-term`; searching itself does not write history
 - `search_emoji()` adds a `search_score` per emoji: the summed search counts of that emoji's keywords. Only whole-keyword matches count, so partial keystrokes ("he", "hea") logged mid-typing don't skew results
 - Final ordering sorts by `(match priority, -(usage_count + search_score), shortcode length)`
 - Two settings, exposed as Alfred workflow environment variables and read via `_env_flag()`:
@@ -68,8 +68,8 @@ uv run src/main.py "heart" --indent 2
 ## Bundling
 
 The `just bundle` command:
-1. Installs `em-keyboard` into `dist/lib/` using `uv pip install --target`
-2. Copies `main.py`, `info.plist`, and `icon.png` to `dist/`
-3. Creates `Emoji Search.alfredworkflow` zip package
+1. Exports locked runtime dependencies and installs them into a fresh temporary staging directory
+2. Copies `main.py`, `info.plist`, and `icon.png` to staging and smoke-tests it
+3. Creates `dist/Emoji Search.alfredworkflow` zip package only after validation
 
-The bundled workflow includes `em-keyboard` in `lib/` and runs via the system Python 3. The `main.py` script automatically adds the bundled `lib/` directory to `sys.path` when present.
+The bundled workflow includes `em-keyboard` in `lib/`. Both workflow actions use `launch.sh`, which checks for Python 3.12+ in PATH, Homebrew, and python.org locations, or uses an explicit `emoji_python` executable override. Unsupported or missing interpreters produce an Alfred setup message. The `main.py` script automatically adds the bundled `lib/` directory to `sys.path` when present.

@@ -31,13 +31,11 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
+      - name: Run regression tests
+        run: just test
+
       - name: Bump version
         run: just bump
-
-      - name: Push commit and tag
-        run: |
-          git push
-          git push --tags
 
       - name: Get new version
         id: version
@@ -47,6 +45,9 @@ jobs:
 
       - name: Build workflow bundle
         run: just bundle
+
+      - name: Push validated commit and tag
+        run: git push --atomic origin HEAD "${{ steps.version.outputs.version }}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3

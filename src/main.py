@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-# /// script
-# requires-python = ">=3.12"
-# dependencies = [
-#     "em-keyboard",
-# ]
-# ///
 """
 Emoji lookup Alfred workflow
 
@@ -26,7 +20,7 @@ if lib_path.exists():
     sys.path.insert(0, str(lib_path))
 
 from em._version import __version__ as EM_VERSION  # noqa: E402
-from em.cli import do_find, parse_emojis  # noqa: E402
+from em.cli import do_find  # noqa: E402
 
 VERSION = "2026.7.5"
 GITHUB_URL = "https://github.com/jefftriplett/alfred-emoji-search"
@@ -48,50 +42,82 @@ def _env_flag(name: str, default: bool = True) -> bool:
     return value.strip().lower() in ("1", "true", "yes", "on")
 
 
+def normalize_query(query: str) -> str:
+    """Accept wrapped shortcodes and space-separated names, preserving emoticons."""
+    query = query.lower().strip()
+    if len(query) > 2 and query.startswith(":") and query.endswith(":"):
+        query = query[1:-1]
+    return "_".join(query.split())
+
+
+def parse_emojis() -> dict[str, list[str]]:
+    # The installed/bundled package is a directory. Avoid importlib.resources'
+    # archive-handling imports on every Script Filter invocation.
+    import em
+
+    return json.loads(Path(em.__file__).with_name("emojis.json").read_text("utf-8"))
+
+
+def _load_counts(path: Path) -> dict[str, int]:
+    try:
+        data = json.loads(path.read_text("utf-8"))
+    except (ValueError, OSError):
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    return {
+        key: count
+        for key, count in data.items()
+        if key and type(count) is int and count > 0
+    }
+
+
+def _record_count(path: Path, key: str) -> None:
+    """Serialize increments and replace atomically; history must not block use."""
+    import fcntl
+    import tempfile
+
+    temporary = None
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.with_suffix(".lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            history = _load_counts(path)
+            history[key] = history.get(key, 0) + 1
+            with tempfile.NamedTemporaryFile(
+                mode="w", encoding="utf-8", dir=path.parent, delete=False
+            ) as output:
+                temporary = Path(output.name)
+                json.dump(history, output)
+            os.replace(temporary, path)
+            temporary = None
+    except OSError as exc:
+        print(f"Could not record history: {exc}", file=sys.stderr)
+    finally:
+        if temporary is not None:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+
 def load_search_history() -> dict[str, int]:
-    """Load search-term history from disk."""
-    if SEARCH_HISTORY_FILE.exists():
-        try:
-            return json.loads(SEARCH_HISTORY_FILE.read_text())
-        except (json.JSONDecodeError, OSError):
-            return {}
-    return {}
+    return _load_counts(SEARCH_HISTORY_FILE)
 
 
 def record_search(term: str) -> None:
-    """Record a search term, unless logging is disabled."""
-    if not _env_flag("log_search_history"):
-        return
-    term = term.lower().strip()
-    if not term:
-        return
-    history = load_search_history()
-    history[term] = history.get(term, 0) + 1
-    HISTORY_DIR.mkdir(parents=True, exist_ok=True)
-    SEARCH_HISTORY_FILE.write_text(json.dumps(history))
+    term = normalize_query(term)
+    if term and _env_flag("log_search_history"):
+        _record_count(SEARCH_HISTORY_FILE, term)
 
 
 def load_history() -> dict[str, int]:
-    """Load emoji usage history from disk."""
-    if HISTORY_FILE.exists():
-        try:
-            return json.loads(HISTORY_FILE.read_text())
-        except (json.JSONDecodeError, OSError):
-            return {}
-    return {}
-
-
-def save_history(history: dict[str, int]) -> None:
-    """Save emoji usage history to disk."""
-    HISTORY_DIR.mkdir(parents=True, exist_ok=True)
-    HISTORY_FILE.write_text(json.dumps(history))
+    return _load_counts(HISTORY_FILE)
 
 
 def record_usage(emoji_char: str) -> None:
-    """Record that an emoji was used."""
-    history = load_history()
-    history[emoji_char] = history.get(emoji_char, 0) + 1
-    save_history(history)
+    if emoji_char:
+        _record_count(HISTORY_FILE, emoji_char)
 
 
 def get_frequent_emoji(limit: int = 20) -> list[tuple[str, str, str, int]]:
@@ -121,7 +147,7 @@ def search_emoji(query: str) -> list[tuple[str, str, str, int]]:
     Search emoji by shortcode or keywords using em-keyboard's do_find.
     Returns matching (emoji_char, shortcode, description, usage_count) tuples.
     """
-    query = query.lower().strip()
+    query = normalize_query(query)
     if not query:
         return []
 
@@ -167,7 +193,7 @@ def search_emoji(query: str) -> list[tuple[str, str, str, int]]:
 
 
 def format_item(
-    emoji_char: str, shortcode: str, description: str, count: int = 0
+    emoji_char: str, shortcode: str, description: str, count: int = 0, query: str = ""
 ) -> dict:
     """Format an emoji as an Alfred result item."""
     subtitle = f"{shortcode} - {description}"
@@ -176,6 +202,11 @@ def format_item(
 
     return {
         "arg": emoji_char,
+        "variables": {
+            "result_action": "copy",
+            "selected_emoji": emoji_char,
+            "search_term": normalize_query(query),
+        },
         "subtitle": subtitle,
         "title": f"{emoji_char}  {shortcode.strip(':')}",
         "mods": {
@@ -201,36 +232,90 @@ def get_version_info() -> dict:
                 "title": f"✨ Emoji Search v{VERSION}",
                 "subtitle": f"Powered by em-keyboard v{EM_VERSION}",
                 "arg": VERSION,
+                "variables": {
+                    "result_action": "copy",
+                    "selected_emoji": "",
+                    "search_term": "",
+                },
                 "valid": True,
             },
             {
                 "title": "📦 View on GitHub",
                 "subtitle": "⏎ Copy URL  ·  ⌘⏎ Open in browser",
                 "arg": GITHUB_URL,
+                "variables": {
+                    "result_action": "copy",
+                    "selected_emoji": "",
+                    "search_term": "",
+                },
+                "mods": {
+                    "cmd": {
+                        "variables": {
+                            "result_action": "open",
+                            "selected_emoji": "",
+                            "search_term": "",
+                        }
+                    }
+                },
                 "valid": True,
             },
             {
                 "title": "🐛 Report an Issue",
                 "subtitle": "⏎ Copy URL  ·  ⌘⏎ Open in browser",
                 "arg": f"{GITHUB_URL}/issues",
+                "variables": {
+                    "result_action": "copy",
+                    "selected_emoji": "",
+                    "search_term": "",
+                },
+                "mods": {
+                    "cmd": {
+                        "variables": {
+                            "result_action": "open",
+                            "selected_emoji": "",
+                            "search_term": "",
+                        }
+                    }
+                },
                 "valid": True,
             },
             {
                 "title": "📥 Check for Updates",
                 "subtitle": "⏎ Copy URL  ·  ⌘⏎ Open in browser",
                 "arg": f"{GITHUB_URL}/releases",
+                "variables": {
+                    "result_action": "copy",
+                    "selected_emoji": "",
+                    "search_term": "",
+                },
+                "mods": {
+                    "cmd": {
+                        "variables": {
+                            "result_action": "open",
+                            "selected_emoji": "",
+                            "search_term": "",
+                        }
+                    }
+                },
                 "valid": True,
             },
         ]
     }
 
 
-def main(query: str = "", indent: int | None = None, record: str | None = None):
+def main(
+    query: str = "",
+    indent: int | None = None,
+    record: str | None = None,
+    record_term: str = "",
+):
     """
     Search for emoji by shortcode or description.
     """
-    if record:
+    if record is not None:
         record_usage(record)
+        if record:
+            record_search(record_term)
         return
 
     query = query.strip()
@@ -262,7 +347,6 @@ def main(query: str = "", indent: int | None = None, record: str | None = None):
                 ]
             }
     else:
-        record_search(query)
         matches = search_emoji(query)
         if not matches:
             result = {
@@ -271,13 +355,14 @@ def main(query: str = "", indent: int | None = None, record: str | None = None):
                         "arg": "",
                         "subtitle": "No emoji found",
                         "title": f"No results for '{query}'",
+                        "valid": False,
                     }
                 ]
             }
         else:
             result = {
                 "items": [
-                    format_item(emoji_char, shortcode, description, count)
+                    format_item(emoji_char, shortcode, description, count, query)
                     for emoji_char, shortcode, description, count in matches
                 ]
             }
@@ -292,5 +377,8 @@ if __name__ == "__main__":
     parser.add_argument("query", nargs="?", default="", help="Search query")
     parser.add_argument("--indent", type=int, default=None, help="JSON indent level")
     parser.add_argument("--record", type=str, default=None, help="Record emoji usage")
+    parser.add_argument(
+        "--record-term", default="", help="Record an accepted search term"
+    )
     args = parser.parse_args()
-    main(args.query, args.indent, args.record)
+    main(args.query, args.indent, args.record, args.record_term)
