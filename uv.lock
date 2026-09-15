@@ -4,7 +4,7 @@ requires-python = ">=3.12"
 
 [[package]]
 name = "alfred-emoji-search"
-version = "2026.7.5"
+version = "2026.9.0"
 source = { virtual = "." }
 dependencies = [
     { name = "alfred-workflow" },
