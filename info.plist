@@ -333,7 +333,7 @@ Frequently used emoji appear when you open the search with no query.</string>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>2026.9.0</string>
+	<string>2026.9.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/jefftriplett</string>
 </dict>
